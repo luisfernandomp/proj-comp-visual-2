@@ -15,8 +15,8 @@ de decodificação do conteúdo, conforme previsto no escopo do trabalho.
 | *(preencher)* | | Carregamento de imagem e sistema de build (`image_loader`, `Makefile`) |
 | *(preencher)* | | Pré-processamento: escala de cinza, histograma, Otsu e binarização adaptativa (`image_processing`) |
 | *(preencher)* | | Detecção dos padrões de localização e da região do QR Code (`qr_detector`) |
-| *(preencher)* | | Interface gráfica, marcação da região e salvamento (`gui`, `image_saver`) |
-| *(preencher)* | | Decodificação com a biblioteca e integração dos módulos (`qr_decoder`, `main`) |
+| *(preencher)* | | Interface gráfica, marcação da região e salvamento (`gui*`, `image_saver`) |
+| *(preencher)* | | Decodificação com a biblioteca e integração dos módulos (`qr_decoder`, `analise`, `main`) |
 
 ## Como compilar e executar
 
@@ -88,20 +88,31 @@ e não na resolução da janela.
 ```
 proj2/
 ├── src/
-│   ├── main.c                 # ponto de entrada e integração dos módulos
+│   ├── main.c                 # estado da aplicação e ligação entre as partes
+│   ├── analise.h/.c           # encadeia as etapas de processamento da imagem
 │   ├── image_loader.h/.c      # carregamento da imagem
 │   ├── image_processing.h/.c  # escala de cinza, histograma e binarização
 │   ├── qr_tipos.h/.c          # tipos e geometria compartilhados
 │   ├── qr_detector.h/.c       # localização dos QR Codes na imagem
 │   ├── qr_decoder.h/.c        # decodificação do conteúdo (ZBar)
 │   ├── image_saver.h/.c       # gravação da imagem marcada
-│   └── gui.h/.c               # interface gráfica
+│   ├── gui.h                  # interface pública da interface gráfica
+│   ├── gui_interno.h          # paleta e utilitários internos da interface
+│   ├── gui.c                  # janelas, fontes, texturas e eventos
+│   ├── gui_imagem.c           # janela principal: imagem e marcação
+│   └── gui_painel.c           # janela de leitura: informações e botões
 ├── exemplos/                  # imagens de teste
 ├── assets/
 │   └── fonts/                 # DejaVu Sans, usada pelo SDL_ttf
 ├── Makefile                   # compila os arquivos em src/*.c
 └── README.md
 ```
+
+Cada arquivo tem uma responsabilidade única e as dependências vão sempre na
+mesma direção: `main.c` conhece `analise` e `gui`, `analise` conhece os
+módulos de processamento, e nenhum módulo de processamento conhece a
+interface. Os três arquivos da interface compartilham apenas o que está em
+`gui_interno.h`; o restante do programa enxerga somente `gui.h`.
 
 ## Como funciona
 
@@ -192,7 +203,7 @@ localizada na etapa anterior. Um símbolo que a biblioteca leia fora de
 qualquer região detectada é acrescentado ao resultado e identificado na
 interface como vindo da biblioteca, e não da detecção própria.
 
-### 5. Apresentação (`gui`)
+### 5. Apresentação (`gui`, `gui_imagem`, `gui_painel`)
 
 A janela principal ajusta a imagem à área disponível mantendo a proporção e
 desenha a marcação convertendo as coordenadas da imagem para as da janela. A
@@ -218,7 +229,7 @@ implementação, todos reunidos no topo dos respectivos arquivos:
 | Distância entre centros | de 10 a 180 módulos | `qr_detector.c` |
 | Acerto mínimo no padrão de temporização | 75% dos módulos | `qr_detector.c` |
 | Janela da binarização adaptativa | menor lado / 16, entre 15 e 99 px | `image_processing.c` |
-| Desvio da binarização adaptativa | 7 níveis abaixo da média local | `main.c` |
+| Desvio da binarização adaptativa | 7 níveis abaixo da média local | `analise.c` |
 | Máximo de QR Codes por imagem | 8 | `qr_tipos.h` |
 | Máximo de bytes por conteúdo | 2048 | `qr_tipos.h` |
 
