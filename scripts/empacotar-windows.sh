@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Monta o pacote distribuivel do executavel Windows em dist/proj2-windows-x64/,
+# Monta o pacote distribuivel do executavel Windows em dist/Projeto-QR-Code-Windows/,
 # com as DLLs do MSYS2 das quais o executavel depende, a fonte e os exemplos.
 #
 # Uso (no shell MSYS2 UCRT64, a partir da raiz do projeto):
@@ -12,7 +12,7 @@ set -euo pipefail
 MSYS_BIN="${MSYS_BIN:-/c/msys64/ucrt64/bin}"
 OBJDUMP="${OBJDUMP:-$MSYS_BIN/objdump}"
 EXE="proj2.exe"
-SAIDA="dist/proj2-windows-x64"
+SAIDA="dist/Projeto-QR-Code-Windows"
 
 [ -x "$OBJDUMP" ] || { echo "objdump nao encontrado em $OBJDUMP"; exit 1; }
 [ -d "$MSYS_BIN" ] || { echo "diretorio de DLLs nao encontrado: $MSYS_BIN"; exit 1; }
@@ -50,9 +50,9 @@ echo "DLLs incluidas:$copiadas" | tr ' ' '\n'
 
 # Compacta o pacote para anexar como release do repositorio.
 if command -v zip >/dev/null 2>&1; then
-    (cd dist && rm -f proj2-windows-x64.zip && zip -qr proj2-windows-x64.zip proj2-windows-x64)
-    echo "ZIP gerado em dist/proj2-windows-x64.zip"
+    (cd dist && rm -f Projeto-QR-Code-Windows.zip && zip -qr Projeto-QR-Code-Windows.zip Projeto-QR-Code-Windows)
+    echo "ZIP gerado em dist/Projeto-QR-Code-Windows.zip"
 else
-    echo "zip nao encontrado; compacte dist/proj2-windows-x64 manualmente"
-    echo "  (no PowerShell: Compress-Archive -Path dist\proj2-windows-x64 -DestinationPath dist\proj2-windows-x64.zip)"
+    echo "zip nao encontrado; compacte dist/Projeto-QR-Code-Windows manualmente"
+    echo "  (no PowerShell: Compress-Archive -Path dist\Projeto-QR-Code-Windows -DestinationPath dist\Projeto-QR-Code-Windows.zip)"
 fi

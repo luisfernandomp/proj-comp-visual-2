@@ -22,7 +22,7 @@ Não é necessário compilar para usar a aplicação. O executável para Windows
 já acompanhado de todas as DLLs, está publicado como
 [release V1.0.0 do repositório](https://github.com/luisfernandomp/proj-comp-visual-2/releases/tag/V1.0.0).
 
-Baixe o arquivo `proj2-windows-x64.zip`, descompacte e abra `proj2.exe` — por
+Baixe o arquivo `Projeto-QR-Code-Windows.zip`, descompacte e abra `proj2.exe` — por
 duplo clique ou pelo terminal, opcionalmente passando o caminho de uma
 imagem:
 
@@ -93,7 +93,7 @@ mingw32-make dist
 
 Ele resolve as dependências do executável com o `objdump`, recursivamente,
 copia do MSYS2 apenas as DLLs realmente usadas, junta a fonte, os exemplos e
-a documentação, e compacta o resultado em `dist/proj2-windows-x64.zip` — que é
+a documentação, e compacta o resultado em `dist/Projeto-QR-Code-Windows.zip` — que é
 o arquivo anexado à release. Se o MSYS2 estiver em outro caminho, informe o
 diretório das DLLs:
 

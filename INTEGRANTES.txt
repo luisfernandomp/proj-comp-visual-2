@@ -99,7 +99,7 @@ externas, todas localizadas pelo pkg-config durante a compilacao:
 
        bash scripts/empacotar-windows.sh
 
-     A saida fica em dist/proj2-windows-x64/ e dist/proj2-windows-x64.zip.
+     A saida fica em dist/Projeto-QR-Code-Windows/ e dist/Projeto-QR-Code-Windows.zip.
      O script resolve as dependencias do executavel com o objdump e copia
      do MSYS2 apenas as DLLs realmente usadas. Se o MSYS2 estiver instalado
      em outro lugar, informe o diretorio das DLLs:
