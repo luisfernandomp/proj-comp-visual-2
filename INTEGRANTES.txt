@@ -3,6 +3,7 @@ PROJETO 2 - COMPUTACAO VISUAL
 Deteccao e leitura de QR Codes em imagens
 ================================================================================
 
+
 Repositorio: https://github.com/luisfernandomp/proj-comp-visual-2
 
 
