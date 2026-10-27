@@ -12,11 +12,30 @@ de decodificação do conteúdo, conforme previsto no escopo do trabalho.
 
 | Integrante | RA | Parte |
 |---|---|---|
-| *(preencher)* | | Carregamento de imagem e sistema de build (`image_loader`, `Makefile`) |
-| *(preencher)* | | Pré-processamento: escala de cinza, histograma, Otsu e binarização adaptativa (`image_processing`) |
-| *(preencher)* | | Detecção dos padrões de localização e da região do QR Code (`qr_detector`) |
-| *(preencher)* | | Interface gráfica, marcação da região e salvamento (`gui*`, `image_saver`) |
-| *(preencher)* | | Decodificação com a biblioteca e integração dos módulos (`qr_decoder`, `analise`, `main`) |
+| André Cizotti | 10409439 | Processamento de imagem: detecção e conversão para escala de cinza, histograma e estatísticas, limiar de Otsu, binarização adaptativa e detecção dos padrões de localização (`image_loader`, `image_processing`, `qr_detector`) |
+| Pedro de Souza Zequi | 10419805 | Interatividade: alternância entre a imagem binarizada e a original, controle de resolução, seleção e cópia do conteúdo, salvamento da imagem marcada e integração da decodificação (`qr_decoder`, `image_saver`, `analise`, `main`) |
+| Luis Fernando de Mesquita Pereira | 10410686 | Interface gráfica: janela principal, janela secundária, desenho da marcação dos códigos e textos com SDL_ttf (`gui`, `gui_imagem`, `gui_painel`) |
+
+## Executável pronto (Windows x64)
+
+Não é necessário compilar para usar a aplicação. O executável para Windows,
+já acompanhado de todas as DLLs, está publicado como
+[release V1.0.0 do repositório](https://github.com/luisfernandomp/proj-comp-visual-2/releases/tag/V1.0.0).
+
+Baixe o arquivo `proj2-windows-x64.zip`, descompacte e abra `proj2.exe` — por
+duplo clique ou pelo terminal, opcionalmente passando o caminho de uma
+imagem:
+
+```
+proj2.exe exemplos\qr_simples.png
+```
+
+Nenhuma instalação é necessária. A pasta `assets/` precisa continuar ao lado
+do executável, porque a fonte da interface é carregada dela.
+
+O arquivo [INTEGRANTES.txt](INTEGRANTES.txt) traz a identificação do grupo, as
+referências consultadas e o processo de compilação em forma de texto, como
+pede o enunciado.
 
 ## Como compilar e executar
 
@@ -52,6 +71,35 @@ No Windows/MSYS2 o executável gerado é `proj2.exe` e o comando de compilação
 O caminho da imagem é opcional: sem argumento, a aplicação abre com as duas
 janelas vazias e a imagem pode ser escolhida pelo botão **Abrir imagem** ou
 arrastada para a janela.
+
+Se a compilação falhar com `Package 'sdl3' not found`, o `pkg-config` não está
+encontrando as bibliotecas. Os quatro comandos abaixo precisam responder com
+um número de versão; no Windows, uma falha aqui costuma indicar que o shell
+aberto não foi o UCRT64.
+
+```bash
+pkg-config --modversion sdl3 sdl3-image sdl3-ttf zbar
+```
+
+### Gerando o pacote distribuível
+
+O executável compilado no MSYS2 depende de cerca de vinte DLLs do ambiente e
+não roda, sozinho, em uma máquina sem o MSYS2 instalado. O script
+`scripts/empacotar-windows.sh` monta o pacote completo:
+
+```bash
+mingw32-make dist
+```
+
+Ele resolve as dependências do executável com o `objdump`, recursivamente,
+copia do MSYS2 apenas as DLLs realmente usadas, junta a fonte, os exemplos e
+a documentação, e compacta o resultado em `dist/proj2-windows-x64.zip` — que é
+o arquivo anexado à release. Se o MSYS2 estiver em outro caminho, informe o
+diretório das DLLs:
+
+```bash
+MSYS_BIN=/d/msys64/ucrt64/bin bash scripts/empacotar-windows.sh
+```
 
 ## Como usar
 
@@ -104,7 +152,10 @@ proj2/
 ├── exemplos/                  # imagens de teste
 ├── assets/
 │   └── fonts/                 # DejaVu Sans, usada pelo SDL_ttf
+├── scripts/
+│   └── empacotar-windows.sh   # monta o pacote executável + DLLs
 ├── Makefile                   # compila os arquivos em src/*.c
+├── INTEGRANTES.txt            # grupo, referências e processo de compilação
 └── README.md
 ```
 

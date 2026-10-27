@@ -5,6 +5,9 @@
 proj2
 proj2.exe
 
+# Pacote distribuível gerado por scripts/empacotar-windows.sh
+dist/
+
 # Saídas da aplicação
 qr_resultado.png
 output_image.png

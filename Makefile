@@ -20,7 +20,12 @@ $(TARGET): $(OBJS)
 %.o: %.c
 	$(CC) $(CFLAGS) -c $< -o $@
 
+# Monta o pacote distribuível para Windows (executável + DLLs) em dist/.
+dist: $(TARGET)
+	bash scripts/empacotar-windows.sh
+
 clean:
 	rm -f $(OBJS) $(TARGET)
+	rm -rf dist
 
-.PHONY: clean
+.PHONY: clean dist

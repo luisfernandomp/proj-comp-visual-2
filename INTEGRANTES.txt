@@ -1,0 +1,208 @@
+================================================================================
+PROJETO 2 - COMPUTACAO VISUAL
+Deteccao e leitura de QR Codes em imagens
+================================================================================
+
+Repositorio: https://github.com/luisfernandomp/proj-comp-visual-2
+
+
+--------------------------------------------------------------------------------
+1. INTEGRANTES DO GRUPO
+--------------------------------------------------------------------------------
+
+Andre Cizotti                       RA: 10409439
+  Processamento da imagem: deteccao e conversao para escala de cinza,
+  histograma e estatisticas, limiar de Otsu, binarizacao adaptativa e
+  deteccao dos padroes de localizacao do QR Code.
+  Arquivos: src/image_loader.c, src/image_processing.c, src/qr_detector.c
+
+Pedro de Souza Zequi                RA: 10419805
+  Interatividade: alternancia entre a imagem original e a binarizada,
+  controle de resolucao da janela, selecao e copia do conteudo lido,
+  salvamento da imagem marcada e integracao da decodificacao.
+  Arquivos: src/qr_decoder.c, src/image_saver.c, src/analise.c, src/main.c
+
+Luis Fernando de Mesquita Pereira   RA: 10410686
+  Interface grafica: janela principal, janela secundaria, desenho da
+  marcacao dos codigos localizados e textos com SDL_ttf.
+  Arquivos: src/gui.c, src/gui_imagem.c, src/gui_painel.c, src/gui_interno.h
+
+
+--------------------------------------------------------------------------------
+2. CONTEUDO DO PACOTE
+--------------------------------------------------------------------------------
+
+src/                Codigo-fonte da aplicacao (C99)
+assets/fonts/       Fonte DejaVu Sans, usada pelo SDL_ttf
+exemplos/           Imagens de teste
+scripts/            Script de empacotamento do executavel
+Makefile            Compilacao do projeto
+README.md           Documentacao completa (algoritmo, uso, parametros)
+INTEGRANTES.txt     Este arquivo
+LICENSE             Licenca do projeto
+
+O executavel para Windows (x64), com todas as DLLs necessarias, e
+distribuido como release do repositorio:
+
+  https://github.com/luisfernandomp/proj-comp-visual-2/releases/tag/V1.0.0
+
+Para executar no Windows, basta descompactar o ZIP da release e abrir
+proj2.exe (por duplo clique ou pelo terminal). Nenhuma instalacao e
+necessaria: as bibliotecas acompanham o pacote. A pasta assets/ precisa
+continuar ao lado do executavel, porque a fonte da interface e carregada
+dela.
+
+  proj2.exe                          abre a aplicacao com as janelas vazias
+  proj2.exe exemplos\qr_simples.png  abre ja analisando a imagem
+
+
+--------------------------------------------------------------------------------
+3. COMO CONFIGURAR O AMBIENTE E COMPILAR
+--------------------------------------------------------------------------------
+
+A aplicacao e escrita em C (padrao C99) e depende de quatro bibliotecas
+externas, todas localizadas pelo pkg-config durante a compilacao:
+
+  SDL3         janelas, renderizacao, eventos, area de transferencia
+  SDL3_image   leitura dos arquivos de imagem (PNG, JPEG, ...)
+  SDL3_ttf     renderizacao dos textos da interface
+  ZBar         decodificacao do conteudo do QR Code
+
+
+3.1. WINDOWS (MSYS2 / UCRT64) - ambiente usado no desenvolvimento
+
+  a) Instale o MSYS2 a partir de https://www.msys2.org/ (instalador padrao,
+     em C:\msys64).
+
+  b) Abra o atalho "MSYS2 UCRT64" (e importante ser o UCRT64, e nao o MSYS
+     nem o MINGW64) e atualize os pacotes:
+
+       pacman -Syu
+
+  c) Instale o compilador, o make e as bibliotecas:
+
+       pacman -S mingw-w64-ucrt-x86_64-gcc mingw-w64-ucrt-x86_64-pkgconf mingw-w64-ucrt-x86_64-make mingw-w64-ucrt-x86_64-SDL3 mingw-w64-ucrt-x86_64-SDL3_image mingw-w64-ucrt-x86_64-SDL3_ttf mingw-w64-ucrt-x86_64-zbar
+
+  d) Entre na pasta do projeto e compile:
+
+       cd /c/caminho/para/proj-comp-visual-2
+       mingw32-make
+
+     O resultado e o executavel proj2.exe na raiz do projeto.
+
+  e) Execute:
+
+       ./proj2.exe exemplos/qr_simples.png
+
+  f) Para gerar o pacote distribuivel (executavel + DLLs + fonte +
+     exemplos, ja compactado em ZIP), rode:
+
+       bash scripts/empacotar-windows.sh
+
+     A saida fica em dist/proj2-windows-x64/ e dist/proj2-windows-x64.zip.
+     O script resolve as dependencias do executavel com o objdump e copia
+     do MSYS2 apenas as DLLs realmente usadas. Se o MSYS2 estiver instalado
+     em outro lugar, informe o diretorio das DLLs:
+
+       MSYS_BIN=/d/msys64/ucrt64/bin bash scripts/empacotar-windows.sh
+
+
+3.2. LINUX (Debian / Ubuntu)
+
+  a) Instale o compilador, o make, o pkg-config e o ZBar:
+
+       sudo apt install build-essential pkg-config libzbar-dev
+
+  b) O SDL3 ainda nao esta empacotado em todas as distribuicoes. Onde
+     houver pacote, basta instalar:
+
+       sudo apt install libsdl3-dev libsdl3-image-dev libsdl3-ttf-dev
+
+     Onde nao houver, compile as tres bibliotecas a partir do codigo-fonte,
+     nesta ordem (SDL, depois SDL_image, depois SDL_ttf). Para cada uma:
+
+       git clone https://github.com/libsdl-org/SDL
+       cmake -S SDL -B build-SDL -DCMAKE_BUILD_TYPE=Release
+       cmake --build build-SDL
+       sudo cmake --install build-SDL
+       sudo ldconfig
+
+     As dependencias de build do SDL no Debian/Ubuntu podem ser instaladas
+     de uma vez com:
+
+       sudo apt build-dep libsdl2-dev
+
+  c) Compile e execute:
+
+       make
+       ./proj2 exemplos/qr_simples.png
+
+
+3.3. VERIFICANDO O AMBIENTE
+
+  Se a compilacao falhar com "Package sdl3 not found", o pkg-config nao
+  esta encontrando as bibliotecas. Confira com:
+
+       pkg-config --modversion sdl3 sdl3-image sdl3-ttf zbar
+
+  Os quatro comandos precisam responder com um numero de versao. No
+  Windows, uma falha aqui costuma indicar que o shell aberto nao foi o
+  UCRT64.
+
+
+--------------------------------------------------------------------------------
+4. REFERENCIAS CONSULTADAS
+--------------------------------------------------------------------------------
+
+Especificacao do QR Code
+  ISO/IEC 18004:2015. Information technology - Automatic identification and
+  data capture techniques - QR Code bar code symbology specification.
+  (estrutura do simbolo, padroes de localizacao na proporcao 1:1:3:1:1,
+  padrao de temporizacao, e relacao entre a versao e o numero de modulos
+  do lado do simbolo: 4 * versao + 17)
+
+Limiarizacao global a partir do histograma
+  OTSU, N. A Threshold Selection Method from Gray-Level Histograms.
+  IEEE Transactions on Systems, Man, and Cybernetics, v. 9, n. 1,
+  p. 62-66, 1979.
+
+Limiarizacao adaptativa com imagem integral
+  BRADLEY, D.; ROTH, G. Adaptive Thresholding Using the Integral Image.
+  Journal of Graphics Tools, v. 12, n. 2, p. 13-21, 2007.
+
+  CROW, F. C. Summed-area tables for texture mapping.
+  ACM SIGGRAPH Computer Graphics, v. 18, n. 3, p. 207-212, 1984.
+
+Processamento de imagens em geral
+  GONZALEZ, R. C.; WOODS, R. E. Digital Image Processing. 4. ed.
+  Pearson, 2018. (escala de cinza, histograma, binarizacao)
+
+Coeficientes de luminancia (Y = 0,2125 R + 0,7154 G + 0,0721 B)
+  Recomendacao ITU-R BT.709-6. Parameter values for the HDTV standards for
+  production and international programme exchange. ITU, 2015.
+
+Deteccao dos padroes de localizacao - projeto de referencia consultado
+  ZXing (Zebra Crossing), detector de QR Code de codigo aberto.
+  https://github.com/zxing/zxing
+
+Bibliotecas utilizadas
+  SDL3        https://wiki.libsdl.org/SDL3/FrontPage
+  SDL3_image  https://wiki.libsdl.org/SDL3_image/FrontPage
+  SDL3_ttf    https://wiki.libsdl.org/SDL3_ttf/FrontPage
+  ZBar        https://github.com/mchehab/zbar
+              Usada apenas na etapa de decodificacao do conteudo, conforme
+              o escopo do trabalho. A localizacao do QR Code na imagem e
+              feita pelo proprio projeto, em src/qr_detector.c.
+
+Ambiente de desenvolvimento
+  MSYS2       https://www.msys2.org/
+  GNU Make    https://www.gnu.org/software/make/manual/make.html
+
+Geracao das imagens de teste em exemplos/
+  qrencode    https://fukuchi.org/works/qrencode/
+
+Fonte usada na interface
+  DejaVu Fonts  https://dejavu-fonts.github.io/
+  (licenca em assets/fonts/LICENSE_DEJAVU.txt)
+
+================================================================================
